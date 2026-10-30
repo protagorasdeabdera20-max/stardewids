@@ -738,3 +738,117 @@ if (document.cookie.includes("debug=true")) {
   document.getElementById("debugMode").checked = true;
   setDebugMode(true);
 }
+
+// --- Lógica del Buscador Interactivo 100% Offline ---
+document.addEventListener("DOMContentLoaded", function () {
+  const input = document.getElementById("mainSearchInput");
+  const clearBtn = document.getElementById("clearSearchBtn");
+  const dropdown = document.getElementById("searchDropdown");
+  const recentList = document.getElementById("recentSearchesList");
+  const suggestionsList = document.getElementById("suggestionsList");
+
+  if (!input) return;
+
+  function getRecentSearches() {
+    return JSON.parse(localStorage.getItem("recent_stardew_searches") || "[]");
+  }
+
+  function saveSearch(term) {
+    if (!term.trim()) return;
+    let searches = getRecentSearches().filter(s => s.toLowerCase() !== term.toLowerCase());
+    searches.unshift(term.trim());
+    if (searches.length > 5) searches.pop();
+    localStorage.setItem("recent_stardew_searches", JSON.stringify(searches));
+  }
+
+  function renderRecent() {
+    const searches = getRecentSearches();
+    recentList.innerHTML = "";
+    if (searches.length === 0) {
+      recentList.innerHTML = '<div style="font-size:12px; color:#aaa; padding:5px;">Sin búsquedas recientes</div>';
+      return;
+    }
+    searches.forEach(term => {
+      const item = document.createElement("div");
+      item.className = "recent-item";
+      item.innerHTML = `<span style="margin-right:8px;">🔍</span><span>${term}</span>`;
+      item.onclick = function () {
+        input.value = term;
+        triggerSearch(term);
+      };
+      recentList.appendChild(item);
+    });
+  }
+
+  function triggerSearch(query) {
+    if (!query.trim()) {
+      dropdown.style.display = "none";
+      clearBtn.style.display = "none";
+      return;
+    }
+
+    clearBtn.style.display = "block";
+    dropdown.style.display = "block";
+    renderRecent();
+
+    const q = query.toLowerCase();
+    suggestionsList.innerHTML = "";
+
+    const rows = document.querySelectorAll("table tr, .item-card, [data-name]");
+    let count = 0;
+
+    rows.forEach(row => {
+      const text = row.innerText || "";
+      if (text.toLowerCase().includes(q) && count < 8) {
+        const imgEl = row.querySelector("img");
+        const imgSrc = imgEl ? imgEl.src : "public/images/favicon.png";
+        
+        const sug = document.createElement("div");
+        sug.className = "suggestion-item";
+        sug.innerHTML = `
+          <img src="${imgSrc}" alt="icon" />
+          <div class="suggestion-info">
+            <span class="suggestion-name">${text.split("\n")[0]}</span>
+            <span class="suggestion-id">Toca para ver objeto</span>
+          </div>
+        `;
+        sug.onclick = function () {
+          saveSearch(query);
+          row.scrollIntoView({ behavior: "smooth", block: "center" });
+          dropdown.style.display = "none";
+        };
+        suggestionsList.appendChild(sug);
+        count++;
+      }
+    });
+
+    if (count === 0) {
+      suggestionsList.innerHTML = '<div style="font-size:12px; color:#888; padding:5px;">No se encontraron coincidencias</div>';
+    }
+  }
+
+  input.addEventListener("input", function () {
+    triggerSearch(this.value);
+  });
+
+  input.addEventListener("focus", function () {
+    if (this.value.trim() !== "") {
+      triggerSearch(this.value);
+    } else {
+      renderRecent();
+      dropdown.style.display = "block";
+    }
+  });
+
+  clearBtn.addEventListener("click", function () {
+    input.value = "";
+    dropdown.style.display = "none";
+    clearBtn.style.display = "none";
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!document.getElementById("searchContainer").contains(e.target)) {
+      dropdown.style.display = "none";
+    }
+  });
+});

@@ -233,6 +233,20 @@ html(lang="en")
         button#copyNBatch(data-translate="batch") Add to batch
         button#copyNConfirm(data-translate="copy") Copy
 
+  
+  //- Componente de Busqueda Interactiva con Lupa e Historial
+  #searchContainer.search-wrapper
+    .search-box-wrapper
+      span.search-icon 🔍
+      input#mainSearchInput(type="text" placeholder="Buscar objeto por nombre o ID..." autocomplete="off")
+      button#clearSearchBtn.clear-btn(style="display:none;") ✕
+    
+    #searchDropdown.search-dropdown(style="display:none;")
+      .search-section-title Búsquedas recientes
+      #recentSearchesList.recent-list
+      .search-section-title Sugerencias de objetos
+      #suggestionsList.suggestions-list
+
   script(src='public/strings.min.js?')
   script(src='public/utils.min.js?')
   script(async defer src='public/itemlist.min.js')
