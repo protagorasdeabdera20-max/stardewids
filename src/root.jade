@@ -1,16 +1,5 @@
 
-  //- Componente de Busqueda Interactiva Arriba
-  #searchContainer.search-wrapper
-    .search-box-wrapper
-      span.search-icon 🔍
-      input#mainSearchInput(type="text" placeholder="Buscar objeto por nombre o ID..." autocomplete="off")
-      button#clearSearchBtn.clear-btn(style="display:none;") ✕
-    
-    #searchDropdown.search-dropdown(style="display:none;")
-      .search-section-title Búsquedas recientes
-      #recentSearchesList.recent-list
-      .search-section-title Sugerencias de objetos
-      #suggestionsList.suggestions-list
+  
 
 doctype html
 
@@ -155,6 +144,20 @@ html(lang="en")
         br
         br
         b Warning: Use the item IDs below at your own risk. Doing so may affect your gaming experience.
+
+  //- Componente de Busqueda Interactiva Arriba
+  #searchContainer.search-wrapper
+    .search-box-wrapper
+      span.search-icon 🔍
+      input#mainSearchInput(type="text" placeholder="Buscar objeto por nombre o ID..." autocomplete="off")
+      button#clearSearchBtn.clear-btn(style="display:none;") ✕
+    
+    #searchDropdown.search-dropdown(style="display:none;")
+      .search-section-title Búsquedas recientes
+      #recentSearchesList.recent-list
+      .search-section-title Sugerencias de objetos
+      #suggestionsList.suggestions-list
+
       div(data-translate="description2")
         | You can spawn items by appending the item ID to your character's name and then talking to NPCs, or by 
         b buying a pet from Marnie
